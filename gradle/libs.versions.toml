@@ -5,9 +5,11 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.6.1"
+lifecycleRuntimeKtx = "2.8.0"
 activityCompose = "1.8.0"
 composeBom = "2023.08.00"
+safeargs = "2.7.7"
+daggerHilt = "2.44"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,4 +30,5 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+navigation-safe-args = {id = "androidx.navigation.safeargs", version.ref = "safeargs"}
+daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
