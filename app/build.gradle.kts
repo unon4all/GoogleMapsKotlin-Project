@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.navigation.safe.args)
     id("kotlin-kapt")
     alias(libs.plugins.daggerHilt)
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -72,6 +73,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.hilt.android)
+    implementation(libs.play.services.maps)
+    implementation(libs.androidx.appcompat)
     kapt(libs.hilt.compiler)
 
     //Navigation Component
@@ -97,6 +100,7 @@ dependencies {
     //Easy Permissions
     implementation(libs.easypermissions.ktx)
 
+    implementation(libs.androidx.appcompat.v120)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
