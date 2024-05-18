@@ -1,4 +1,4 @@
-package com.example.googlemapsproject
+package com.example.googlemapsproject.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentPermissionBinding
 import com.example.googlemapsproject.util.Permissions.hasLocationPermission
 import com.example.googlemapsproject.util.Permissions.requestLocationPermission
