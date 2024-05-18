@@ -12,6 +12,7 @@ object ExtensionFunctions {
 
     fun View.hide() {
         this.visibility = View.INVISIBLE
+
     }
 
     fun Button.enable() {
@@ -21,6 +22,7 @@ object ExtensionFunctions {
 
     fun Button.disable() {
         this.isEnabled = false
+
     }
 
 }

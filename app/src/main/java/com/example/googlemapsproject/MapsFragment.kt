@@ -2,6 +2,7 @@ package com.example.googlemapsproject
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +11,18 @@ import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
 import com.example.googlemapsproject.util.ExtensionFunctions.hide
 import com.example.googlemapsproject.util.ExtensionFunctions.show
+import com.example.googlemapsproject.util.Permissions.hasBackgroundLocationPermission
+import com.example.googlemapsproject.util.Permissions.requestBackgroundLocationPermission
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.vmadalin.easypermissions.EasyPermissions
+import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
+class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+    EasyPermissions.PermissionCallbacks {
 
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
@@ -25,14 +31,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding =  FragmentMapsBinding.inflate(inflater, container, false)
+        _binding = FragmentMapsBinding.inflate(inflater, container, false)
 
         binding.startButton.setOnClickListener {
-
+            onStartButtonClicked()
         }
 
         binding.stopButton.setOnClickListener {
@@ -45,6 +49,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -89,4 +94,41 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
         return false
     }
+
+    private fun onStartButtonClicked() {
+        if (hasBackgroundLocationPermission(requireContext())) {
+//            binding.startButton.hide()
+//            binding.stopButton.show()
+//            binding.resetButton.show()
+            Log.d("MapsFragment", "Already granted ")
+        } else {
+            requestBackgroundLocationPermission(this)
+        }
+    }
+
+
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)",
+            "com.vmadalin.easypermissions.EasyPermissions"
+        )
+    )
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.permissionPermanentlyDenied(this, perms[0])) {
+            SettingsDialog.Builder(requireActivity()).build().show()
+        } else {
+            requestBackgroundLocationPermission(this)
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        onStartButtonClicked()
+    }
+
 }
