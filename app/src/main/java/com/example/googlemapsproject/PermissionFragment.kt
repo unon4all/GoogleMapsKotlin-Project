@@ -63,5 +63,6 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         findNavController().navigate(R.id.action_permissionFragment_to_mapsFragment)
 
+
     }
 }

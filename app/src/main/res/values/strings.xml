@@ -4,4 +4,9 @@
     <string name="continue_button">Continue</string>
     <string name="permission_description">"Welcome to Distance Tracker. In order to use the App, we will first need the location permissions from you. Otherwise we will not be able to provide with our services. If you agree and wish to continue click the button below. Thank You. "</string>
     <string name="permission_required">Permission Required</string>
+    <string name="_timerCountDown">3</string>
+    <string name="hint_text">Tap on My Location Button</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="reset">Reset</string>
 </resources>
