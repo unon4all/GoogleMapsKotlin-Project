@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.googlemapsproject.Permissions.hasLocationPermission
-import com.example.googlemapsproject.Permissions.requestLocationPermission
 import com.example.googlemapsproject.databinding.FragmentPermissionBinding
+import com.example.googlemapsproject.util.Permissions.hasLocationPermission
+import com.example.googlemapsproject.util.Permissions.requestLocationPermission
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 
@@ -17,6 +17,7 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var _binding: FragmentPermissionBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

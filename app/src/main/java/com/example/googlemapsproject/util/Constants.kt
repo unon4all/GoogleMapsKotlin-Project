@@ -1,4 +1,4 @@
-package com.example.googlemapsproject
+package com.example.googlemapsproject.util
 
 object Constants {
 

@@ -1,21 +1,27 @@
 package com.example.googlemapsproject
 
-import androidx.fragment.app.Fragment
-
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
-
+import com.example.googlemapsproject.util.ExtensionFunctions.hide
+import com.example.googlemapsproject.util.ExtensionFunctions.show
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class MapsFragment : Fragment(), OnMapReadyCallback {
+class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var map: GoogleMap
 
 
     override fun onCreateView(
@@ -46,12 +52,41 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
     }
 
-    override fun onMapReady(p0: GoogleMap) {
+    @SuppressLint("MissingPermission")
+    override fun onMapReady(googleMap: GoogleMap) {
+
+        map = googleMap
+
+        map.setOnMyLocationButtonClickListener(this)
+
+        map.isMyLocationEnabled = true
+        map.uiSettings.apply {
+            isZoomControlsEnabled = false
+            isZoomGesturesEnabled = false
+            isRotateGesturesEnabled = false
+            isTiltGesturesEnabled = false
+            isCompassEnabled = false
+            isScrollGesturesEnabled = false
+        }
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+
+        binding.hintTextView.animate().alpha(0f).duration = 1000
+
+        lifecycleScope.launch {
+            delay(2500)
+
+            binding.hintTextView.hide()
+            binding.startButton.show()
+        }
+
+        return false
     }
 }

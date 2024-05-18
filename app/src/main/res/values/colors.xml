@@ -10,4 +10,6 @@
 
     <color name="red"> #FF0000 </color>
     <color name="orange"> #FFA500 </color>
+
+    <color name="skyblue"> #87CEEB </color>
 </resources>

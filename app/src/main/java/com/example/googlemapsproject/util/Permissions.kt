@@ -1,9 +1,9 @@
-package com.example.googlemapsproject
+package com.example.googlemapsproject.util
 
 import android.Manifest
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.example.googlemapsproject.Constants.PERMISSION_REQUEST_CODE
+import com.example.googlemapsproject.util.Constants.PERMISSION_REQUEST_CODE
 import com.vmadalin.easypermissions.EasyPermissions
 
 object Permissions {
