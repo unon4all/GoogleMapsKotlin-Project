@@ -1,6 +1,7 @@
 package com.example.googlemapsproject.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -11,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
+import com.example.googlemapsproject.service.TrackerService
+import com.example.googlemapsproject.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.googlemapsproject.util.ExtensionFunctions.disable
 import com.example.googlemapsproject.util.ExtensionFunctions.hide
 import com.example.googlemapsproject.util.ExtensionFunctions.show
@@ -134,12 +137,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             }
 
             override fun onFinish() {
+                sendActionCommandToService(ACTION_START_OR_RESUME_SERVICE)
                 binding.timerTextView.hide()
             }
 
         }
 
         timer.start()
+    }
+
+    private fun sendActionCommandToService(action: String){
+        Intent(requireContext(), TrackerService::class.java).apply {
+            this.action = action
+            requireContext().startService(this)
+        }
     }
 
 
