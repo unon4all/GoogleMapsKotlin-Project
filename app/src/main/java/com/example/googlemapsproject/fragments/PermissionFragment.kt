@@ -50,21 +50,14 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-
         if (EasyPermissions.permissionPermanentlyDenied(this,perms[0])){
             SettingsDialog.Builder(requireActivity()).build().show()
         }else {
-
             requestLocationPermission(this)
-
         }
-
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-
         findNavController().navigate(R.id.action_permissionFragment_to_mapsFragment)
-
-
     }
 }

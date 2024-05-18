@@ -2,6 +2,7 @@ package com.example.googlemapsproject.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -13,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
 import com.example.googlemapsproject.service.TrackerService
-import com.example.googlemapsproject.util.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
 import com.example.googlemapsproject.util.ExtensionFunctions.disable
 import com.example.googlemapsproject.util.ExtensionFunctions.hide
 import com.example.googlemapsproject.util.ExtensionFunctions.show
@@ -24,19 +25,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
 class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
     EasyPermissions.PermissionCallbacks {
 
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var map: GoogleMap
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -46,15 +43,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         binding.startButton.setOnClickListener {
             onStartButtonClicked()
         }
-
-        binding.stopButton.setOnClickListener {
-
-        }
-
-        binding.resetButton.setOnClickListener {
-
-        }
-
         return binding.root
     }
 
@@ -139,29 +127,24 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             }
 
             override fun onFinish() {
-                sendActionCommandToService(ACTION_START_OR_RESUME_SERVICE)
+                sendActionCommandToService(ACTION_SERVICE_START)
                 binding.timerTextView.hide()
             }
-
         }
-
         timer.start()
     }
 
-    private fun sendActionCommandToService(action: String){
-        Intent(requireContext(), TrackerService::class.java).apply {
-            this.action = action
-            requireContext().startService(this)
+    private fun sendActionCommandToService(action: String) {
+        Intent(requireContext(), TrackerService::class.java).also { intent ->
+            intent.action = action
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                requireContext().startForegroundService(intent)
+            } else {
+                requireContext().startService(intent)
+            }
         }
     }
 
-
-    @Deprecated(
-        "Deprecated in Java", ReplaceWith(
-            "EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)",
-            "com.vmadalin.easypermissions.EasyPermissions"
-        )
-    )
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -179,5 +162,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
         onStartButtonClicked()
     }
-
 }
+
+

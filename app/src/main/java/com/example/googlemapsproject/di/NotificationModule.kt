@@ -25,13 +25,18 @@ object NotificationModule {
 
     @ServiceScoped
     @Provides
-    private fun providePendingIntent(
+    fun providePendingIntent(
         @ApplicationContext context: Context
     ): PendingIntent {
+        val notificationIntent = Intent(context, MainActivity::class.java).apply {
+            action = ACTION_NAVIGATE_TO_FRAGMENT
+        }
+
         return PendingIntent.getActivity(
-            context, PENDING_INTENT_ID, Intent(context, MainActivity::class.java).apply {
-                this.action = ACTION_NAVIGATE_TO_FRAGMENT
-            }, PendingIntent.FLAG_UPDATE_CURRENT
+            context,
+            PENDING_INTENT_ID,
+            notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
@@ -40,10 +45,14 @@ object NotificationModule {
     fun provideNotificationBuilder(
         @ApplicationContext context: Context, pendingIntent: PendingIntent
     ): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID).setContentTitle(
-            NOTIFICATION_CHANNEL_NAME
-        ).setContentText("Running...").setSmallIcon(R.drawable.baseline_directions_run_24)
-            .setOngoing(true).setAutoCancel(false).setContentIntent(pendingIntent)
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(NOTIFICATION_CHANNEL_NAME)
+            .setContentText("Running...")
+            .setSmallIcon(R.drawable.baseline_directions_run_24)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
     }
 
 
@@ -56,3 +65,4 @@ object NotificationModule {
     }
 
 }
+

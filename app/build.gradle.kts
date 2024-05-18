@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     kapt(libs.hilt.compiler)
 
+
     //Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -110,8 +111,9 @@ dependencies {
     //Util
     implementation(libs.android.maps.utils)
 
-    implementation(libs.androidx.hilt.lifecycle.viewmodel)
     kapt(libs.androidx.hilt.compiler)
+
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
 
     //Easy Permissions
     implementation(libs.easypermissions.ktx)
