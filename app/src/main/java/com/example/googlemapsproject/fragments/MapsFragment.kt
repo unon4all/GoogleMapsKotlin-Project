@@ -2,7 +2,6 @@ package com.example.googlemapsproject.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -20,6 +19,8 @@ import com.example.googlemapsproject.util.ExtensionFunctions.hide
 import com.example.googlemapsproject.util.ExtensionFunctions.show
 import com.example.googlemapsproject.util.Permissions.hasBackgroundLocationPermission
 import com.example.googlemapsproject.util.Permissions.requestBackgroundLocationPermission
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -33,16 +34,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var map: GoogleMap
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
 
         binding.startButton.setOnClickListener {
             onStartButtonClicked()
         }
+
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+
         return binding.root
     }
 
@@ -53,14 +63,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         mapFragment?.getMapAsync(this)
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "PotentialBehaviorOverride")
     override fun onMapReady(googleMap: GoogleMap) {
-
         map = googleMap
-
-        map.setOnMyLocationButtonClickListener(this)
-
         map.isMyLocationEnabled = true
+        map.setOnMyLocationButtonClickListener(this)
         map.uiSettings.apply {
             isZoomControlsEnabled = false
             isZoomGesturesEnabled = false
@@ -69,26 +76,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             isCompassEnabled = false
             isScrollGesturesEnabled = false
         }
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onMyLocationButtonClick(): Boolean {
-
-        binding.hintTextView.animate().alpha(0f).duration = 1000
-
-        lifecycleScope.launch {
-            delay(2500)
-
-            binding.hintTextView.hide()
-            binding.startButton.show()
-        }
-
-        return false
     }
 
     private fun onStartButtonClicked() {
@@ -105,12 +92,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     private fun startCountDown() {
         binding.timerTextView.show()
         binding.stopButton.disable()
-
-        val timer: CountDownTimer = object : CountDownTimer(3000, 1000) {
+        val timer: CountDownTimer = object : CountDownTimer(4000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val currentSecond = millisUntilFinished / 1000
                 if (currentSecond.toString() == "0") {
-                    binding.timerTextView.text = getString(R.string.go)
+                    binding.timerTextView.text = "GO"
                     binding.timerTextView.setTextColor(
                         ContextCompat.getColor(
                             requireContext(), R.color.black
@@ -135,14 +121,27 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     }
 
     private fun sendActionCommandToService(action: String) {
-        Intent(requireContext(), TrackerService::class.java).also { intent ->
-            intent.action = action
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                requireContext().startForegroundService(intent)
-            } else {
-                requireContext().startService(intent)
-            }
+        Intent(
+            requireContext(), TrackerService::class.java
+        ).apply {
+            this.action = action
+            requireContext().startService(this)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        binding.hintTextView.animate().alpha(0f).duration = 1500
+        lifecycleScope.launch {
+            delay(2500)
+            binding.hintTextView.hide()
+            binding.startButton.show()
+        }
+        return false
     }
 
     override fun onRequestPermissionsResult(
@@ -152,7 +151,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (EasyPermissions.permissionPermanentlyDenied(this, perms[0])) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             SettingsDialog.Builder(requireActivity()).build().show()
         } else {
             requestBackgroundLocationPermission(this)

@@ -1,16 +1,16 @@
 package com.example.googlemapsproject.di
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.googlemapsproject.MainActivity
 import com.example.googlemapsproject.R
-import com.example.googlemapsproject.util.Constants.ACTION_NAVIGATE_TO_FRAGMENT
 import com.example.googlemapsproject.util.Constants.NOTIFICATION_CHANNEL_ID
-import com.example.googlemapsproject.util.Constants.NOTIFICATION_CHANNEL_NAME
-import com.example.googlemapsproject.util.Constants.PENDING_INTENT_ID
+import com.example.googlemapsproject.util.Constants.PENDING_INTENT_REQUEST_CODE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,46 +23,48 @@ import dagger.hilt.android.scopes.ServiceScoped
 @InstallIn(ServiceComponent::class)
 object NotificationModule {
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     @ServiceScoped
     @Provides
     fun providePendingIntent(
         @ApplicationContext context: Context
     ): PendingIntent {
-        val notificationIntent = Intent(context, MainActivity::class.java).apply {
-            action = ACTION_NAVIGATE_TO_FRAGMENT
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(
+                context,
+                PENDING_INTENT_REQUEST_CODE,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        } else {
+            PendingIntent.getActivity(
+                context,
+                PENDING_INTENT_REQUEST_CODE,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
         }
-
-        return PendingIntent.getActivity(
-            context,
-            PENDING_INTENT_ID,
-            notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
     }
 
     @ServiceScoped
     @Provides
     fun provideNotificationBuilder(
-        @ApplicationContext context: Context, pendingIntent: PendingIntent
+        @ApplicationContext context: Context,
+        pendingIntent: PendingIntent
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(NOTIFICATION_CHANNEL_NAME)
-            .setContentText("Running...")
-            .setSmallIcon(R.drawable.baseline_directions_run_24)
-            .setOngoing(true)
             .setAutoCancel(false)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.baseline_directions_run_24)
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
     }
-
 
     @ServiceScoped
     @Provides
-    fun provideNotificationManger(
+    fun provideNotificationManager(
         @ApplicationContext context: Context
     ): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
 }
-
