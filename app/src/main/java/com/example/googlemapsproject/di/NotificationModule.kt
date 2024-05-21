@@ -21,7 +21,7 @@ import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
 @InstallIn(ServiceComponent::class)
-object NotificationModule {
+object  NotificationModule {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     @ServiceScoped
