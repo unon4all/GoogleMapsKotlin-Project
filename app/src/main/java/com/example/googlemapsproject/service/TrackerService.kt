@@ -3,6 +3,7 @@ package com.example.googlemapsproject.service
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.location.Location
@@ -56,7 +57,7 @@ class TrackerService : LifecycleService() {
         locationList.postValue(mutableListOf())
     }
 
-    private fun updateLocationList(location:Location){
+    private fun updateLocationList(location: Location) {
         val newLatLng = LatLng(location.latitude, location.longitude)
         locationList.value?.apply {
             add(newLatLng)
@@ -70,7 +71,6 @@ class TrackerService : LifecycleService() {
             result.locations.let { locations ->
                 for (location in locations) {
                     updateLocationList(location)
-
                 }
             }
         }
@@ -94,6 +94,7 @@ class TrackerService : LifecycleService() {
 
                 ACTION_SERVICE_STOP -> {
                     started.postValue(false)
+                    stopForegroundService()
                 }
 
                 else -> {
@@ -116,6 +117,19 @@ class TrackerService : LifecycleService() {
         }
     }
 
+    private fun stopForegroundService() {
+        removeLocationUpdates()
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(
+            NOTIFICATION_ID
+        )
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    private fun removeLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
         val locationRequest =
@@ -124,9 +138,7 @@ class TrackerService : LifecycleService() {
                 .setMinUpdateIntervalMillis(LOCATION_FASTEST_UPDATE_INTERVAL).build()
 
         fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
+            locationRequest, locationCallback, Looper.getMainLooper()
         )
 
         startTime.postValue(System.currentTimeMillis())

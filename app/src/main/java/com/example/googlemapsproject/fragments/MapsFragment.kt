@@ -15,7 +15,9 @@ import com.example.googlemapsproject.databinding.FragmentMapsBinding
 import com.example.googlemapsproject.fragments.MapUtils.setCameraPosition
 import com.example.googlemapsproject.service.TrackerService
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
+import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_STOP
 import com.example.googlemapsproject.util.ExtensionFunctions.disable
+import com.example.googlemapsproject.util.ExtensionFunctions.enable
 import com.example.googlemapsproject.util.ExtensionFunctions.hide
 import com.example.googlemapsproject.util.ExtensionFunctions.show
 import com.example.googlemapsproject.util.Permissions.hasBackgroundLocationPermission
@@ -55,10 +57,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             onStartButtonClicked()
         }
 
+        binding.stopButton.setOnClickListener {
+            onStopButtonClicked()
+        }
+
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
 
         return binding.root
+    }
+
+    private fun onStopButtonClicked() {
+         stopForeGroundService()
+        binding.stopButton.hide()
+        binding.startButton.show()
+    }
+
+    private fun stopForeGroundService() {
+        binding.startButton.disable()
+        sendActionCommandToService(ACTION_SERVICE_STOP)
     }
 
 
@@ -89,6 +106,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         TrackerService.locationList.observe(viewLifecycleOwner) {
             if (it != null) {
                 locationList = it
+                if (locationList.size > 1){
+                    binding.stopButton.enable()
+                }
                 drawPolyline()
                 followPolyline()
             }
