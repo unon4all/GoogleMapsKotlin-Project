@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
+import com.example.googlemapsproject.fragments.MapUtils.setCameraPosition
 import com.example.googlemapsproject.service.TrackerService
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
 import com.example.googlemapsproject.util.ExtensionFunctions.disable
@@ -22,6 +22,7 @@ import com.example.googlemapsproject.util.Permissions.hasBackgroundLocationPermi
 import com.example.googlemapsproject.util.Permissions.requestBackgroundLocationPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -88,8 +89,30 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         TrackerService.locationList.observe(viewLifecycleOwner) {
             if (it != null) {
                 locationList = it
-                Log.d("MapsFragment", "locationList: ${locationList.toString()}")
+                drawPolyline()
+                followPolyline()
             }
+        }
+    }
+
+    private fun drawPolyline() {
+        val polyline = map.addPolyline(com.google.android.gms.maps.model.PolylineOptions().apply {
+            width(10f)
+            color(ContextCompat.getColor(requireContext(), R.color.black))
+            jointType(com.google.android.gms.maps.model.JointType.ROUND)
+            startCap(com.google.android.gms.maps.model.RoundCap())
+            endCap(com.google.android.gms.maps.model.RoundCap())
+            addAll(locationList)
+        })
+    }
+
+    private fun followPolyline() {
+        if (locationList.isNotEmpty()) {
+            map.animateCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    setCameraPosition(locationList.last())
+                ), 1000, null
+            )
         }
     }
 
