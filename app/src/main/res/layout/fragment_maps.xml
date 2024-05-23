@@ -7,6 +7,9 @@
 
     <data>
 
+        <variable
+            name="tracking"
+            type="com.example.googlemapsproject.fragments.maps.MapsFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,10 +47,11 @@
 
         <TextView
             android:id="@+id/hint_textView"
+            observeTracking="@{tracking.started}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hint_text"
-            android:textColor="@color/black"
+            android:textColor="#607D8B"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -62,8 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="@string/start"
             android:backgroundTint="@color/skyblue"
+            android:text="@string/start"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +75,7 @@
 
         <Button
             android:id="@+id/stop_button"
+            observeTracking="@{tracking.started}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

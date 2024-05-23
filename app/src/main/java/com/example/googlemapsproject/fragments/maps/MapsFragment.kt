@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
@@ -50,12 +51,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    val started = MutableLiveData(false)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+
+
+
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
+
+        binding.tracking = this
 
         binding.startButton.setOnClickListener {
             onStartButtonClicked()
@@ -128,6 +136,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 showBiggerPicture()
 //                displayResults()
             }
+        }
+
+        TrackerService.started.observe(viewLifecycleOwner) {
+            started.value = it
         }
     }
 
