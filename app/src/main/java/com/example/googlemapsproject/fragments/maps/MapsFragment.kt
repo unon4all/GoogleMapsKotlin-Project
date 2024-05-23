@@ -35,6 +35,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Polyline
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
@@ -57,6 +58,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
     val started = MutableLiveData(false)
 
+    private val polyLineList = mutableListOf<Polyline>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -76,10 +78,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             onStopButtonClicked()
         }
 
+        binding.resetButton.setOnClickListener {
+            onResetButtonClicked()
+        }
+
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
 
         return binding.root
+    }
+
+    private fun onResetButtonClicked() {
+        mapReset()
     }
 
     private fun onStopButtonClicked() {
@@ -186,6 +196,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             endCap(com.google.android.gms.maps.model.RoundCap())
             addAll(locationList)
         })
+
+        polyLineList.add(polyline)
     }
 
     private fun followPolyline() {
@@ -282,6 +294,29 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
         onStartButtonClicked()
     }
+
+    @SuppressLint("MissingPermission")
+    private fun mapReset() {
+
+        fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+            val lastKnownLocation = LatLng(it.result.latitude, it.result.longitude)
+
+            for (polyline in polyLineList) {
+                polyline.remove()
+            }
+
+            map.animateCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    setCameraPosition(lastKnownLocation)
+                )
+            )
+
+            locationList.clear()
+            binding.resetButton.hide()
+            binding.startButton.show()
+        }
+    }
+
 }
 
 
