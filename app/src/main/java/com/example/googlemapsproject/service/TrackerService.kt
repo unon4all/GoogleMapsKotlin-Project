@@ -12,6 +12,7 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
+import com.example.googlemapsproject.fragments.maps.MapUtils.calculateDistance
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_STOP
 import com.example.googlemapsproject.util.Constants.LOCATION_FASTEST_UPDATE_INTERVAL
@@ -71,9 +72,18 @@ class TrackerService : LifecycleService() {
             result.locations.let { locations ->
                 for (location in locations) {
                     updateLocationList(location)
+                    updateNotificationPeriodically()
                 }
             }
         }
+    }
+
+    private fun updateNotificationPeriodically() {
+        notification.apply {
+            setContentTitle("Location: ")
+            setContentText(locationList.value?.let { calculateDistance(it) } + "km")
+        }
+        notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 
 
