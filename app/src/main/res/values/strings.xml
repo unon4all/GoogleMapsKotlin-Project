@@ -10,4 +10,11 @@
     <string name="stop">Stop</string>
     <string name="reset">Reset</string>
     <string name="go">GO</string>
+    <string name="distance">Distance</string>
+    <string name="_0_00km">0.00km</string>
+    <string name="time">Time</string>
+    <string name="_00_00_00">00:00:00</string>
+    <string name="share">Share</string>
+
+    <string name="result">%1$s km</string>
 </resources>

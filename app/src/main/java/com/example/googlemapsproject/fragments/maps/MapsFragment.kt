@@ -11,9 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
+import com.example.googlemapsproject.fragments.maps.MapUtils.calculateDistance
+import com.example.googlemapsproject.fragments.maps.MapUtils.calculateElapsedTime
 import com.example.googlemapsproject.fragments.maps.MapUtils.setCameraPosition
+import com.example.googlemapsproject.model.Result
 import com.example.googlemapsproject.service.TrackerService
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_STOP
@@ -57,7 +61,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-
 
 
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
@@ -134,7 +137,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             stopTime = it
             if (stopTime != 0L) {
                 showBiggerPicture()
-//                displayResults()
+                displayResults()
             }
         }
 
@@ -150,6 +153,28 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         }
 
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100), 2000, null)
+    }
+
+    private fun displayResults() {
+        val result = Result(
+            calculateDistance(locationList), calculateElapsedTime(startTime, stopTime)
+        )
+
+        lifecycleScope.launch {
+            delay(2500)
+            val direction = MapsFragmentDirections.actionMapsFragmentToResultFragment(
+                result
+            )
+
+            findNavController().navigate(direction)
+            binding.startButton.apply {
+                hide()
+                enable()
+            }
+
+            binding.stopButton.hide()
+            binding.resetButton.show()
+        }
     }
 
     private fun drawPolyline() {
