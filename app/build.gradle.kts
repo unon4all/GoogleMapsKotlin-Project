@@ -47,7 +47,7 @@ android {
         dataBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -113,7 +113,7 @@ dependencies {
 
     kapt(libs.androidx.hilt.compiler)
 
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation(libs.androidx.work.runtime.ktx)
 
     //Easy Permissions
     implementation(libs.easypermissions.ktx)

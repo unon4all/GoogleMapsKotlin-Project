@@ -1,11 +1,11 @@
 [versions]
-agp = "8.4.0"
+agp = "8.4.1"
 androidMapsUtils = "3.8.2"
 androidxAppcompat = "1.6.1"
 easypermissionsKtx = "1.0.0"
-hiltAndroid = "2.48"
+hiltAndroid = "2.51.1"
 hiltCompiler = "1.2.0"
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -23,6 +23,7 @@ daggerHilt = "2.48"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 playServicesMaps = "18.2.0"
 appcompat = "1.6.1"
+workRuntimeKtx = "2.9.0"
 
 [libraries]
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
@@ -32,6 +33,7 @@ androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref =
 androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 easypermissions-ktx = { module = "com.vmadalin:easypermissions-ktx", version.ref = "easypermissionsKtx" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }

@@ -40,6 +40,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
 
+    private var startTime = 0L
+    private var stopTime = 0L
+
     private lateinit var map: GoogleMap
 
     private var locationList = mutableListOf<LatLng>()
@@ -68,7 +71,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
     }
 
     private fun onStopButtonClicked() {
-         stopForeGroundService()
+        stopForeGroundService()
         binding.stopButton.hide()
         binding.startButton.show()
     }
@@ -106,12 +109,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         TrackerService.locationList.observe(viewLifecycleOwner) {
             if (it != null) {
                 locationList = it
-                if (locationList.size > 1){
+                if (locationList.size > 1) {
                     binding.stopButton.enable()
                 }
                 drawPolyline()
                 followPolyline()
             }
+        }
+
+        TrackerService.startTime.observe(viewLifecycleOwner) {
+            startTime = it
+        }
+
+        TrackerService.stopTime.observe(viewLifecycleOwner) {
+            stopTime = it
         }
     }
 
@@ -151,6 +162,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         binding.timerTextView.show()
         binding.stopButton.disable()
         val timer: CountDownTimer = object : CountDownTimer(4000, 1000) {
+            @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
                 val currentSecond = millisUntilFinished / 1000
                 if (currentSecond.toString() == "0") {
