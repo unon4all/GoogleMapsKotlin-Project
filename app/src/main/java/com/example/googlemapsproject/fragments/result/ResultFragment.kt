@@ -1,4 +1,4 @@
-package com.example.googlemapsproject.fragments
+package com.example.googlemapsproject.fragments.result
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

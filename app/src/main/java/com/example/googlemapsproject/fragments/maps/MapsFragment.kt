@@ -1,4 +1,4 @@
-package com.example.googlemapsproject.fragments
+package com.example.googlemapsproject.fragments.maps
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.googlemapsproject.R
 import com.example.googlemapsproject.databinding.FragmentMapsBinding
-import com.example.googlemapsproject.fragments.MapUtils.setCameraPosition
+import com.example.googlemapsproject.fragments.maps.MapUtils.setCameraPosition
 import com.example.googlemapsproject.service.TrackerService
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_START
 import com.example.googlemapsproject.util.Constants.ACTION_SERVICE_STOP
@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
@@ -123,7 +124,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
         TrackerService.stopTime.observe(viewLifecycleOwner) {
             stopTime = it
+            if (stopTime != 0L) {
+                showBiggerPicture()
+//                displayResults()
+            }
         }
+    }
+
+    private fun showBiggerPicture() {
+        val bounds = LatLngBounds.builder()
+        for (location in locationList) {
+            bounds.include(location)
+        }
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100), 2000, null)
     }
 
     private fun drawPolyline() {

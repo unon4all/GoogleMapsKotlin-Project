@@ -1,4 +1,4 @@
-package com.example.googlemapsproject.fragments
+package com.example.googlemapsproject.fragments.maps
 
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng

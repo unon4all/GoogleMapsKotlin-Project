@@ -1,4 +1,4 @@
-package com.example.googlemapsproject.fragments
+package com.example.googlemapsproject.fragments.permissions
 
 import android.os.Build
 import android.os.Bundle
